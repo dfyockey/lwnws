@@ -28,8 +28,8 @@ string fv2str (bop::variables_map& vm, string arg) {
 }
 
 int main(int argc, char* argv[]) {
-	bop::options_description desc("\nGet the latest weather conditions (in GeoJSON format) at\n"
-			                      "the U.S. National Weather Service observation station\n"
+	bop::options_description desc("\nGet the latest weather conditions at the\n"
+			                      "U.S. National Weather Service observation station\n"
 			                      "closest to the specified location.\n\n"
 			                      "  Command Line Options");
 	desc.add_options()

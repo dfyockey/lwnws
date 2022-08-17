@@ -4,13 +4,13 @@ Local Weather from the U.S. National Weather Service
 
 ## Description
 
-**lwnws** is intended to get the latest weather conditions (in GeoJSON format) at the
+**lwnws** is intended to get the latest weather conditions at the
 U.S. National Weather Service observation station closest to a specified location. That
 location is specified by providing its latitude and longitude.
 
 
 ### This program is under development and not yet fully functional.
-It currently returns only metadata about the given latitude/longitude point.
+It currently returns only metadata about the given latitude/longitude point in GeoJSON format.
 
 
 ## Requirements
