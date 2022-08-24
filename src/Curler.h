@@ -24,10 +24,12 @@ typedef std::multimap<CURLoption,string> fieldsmap;
 
 class Curler {
 public:
-	Curler(fieldsmap* fields=0);
-	virtual ~Curler();
+	Curler(fieldsmap* fields=0);	// key-value pairs passed to the constructor in the fieldsmap
+									// are persistently stored in the CURL object
 
 	string pull(string url);
+
+	virtual ~Curler();
 
 private:
 	CURL* curl;
