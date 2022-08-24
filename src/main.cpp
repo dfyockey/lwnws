@@ -27,26 +27,33 @@ string fv2str (bop::variables_map& vm, string arg) {
 	return ss.str();
 }
 
-int main(int argc, char* argv[]) {
-	bop::options_description desc("\nGet the latest weather conditions at the\n"
-			                      "U.S. National Weather Service observation station\n"
-			                      "closest to the specified location.\n\n"
-			                      "  Command Line Options");
+
+///// Initialization of Program Options //////////////////////////////
+bop::options_description initDescription() {
+	bop::options_description desc("\nGets the latest weather conditions at the\n"
+				                      "U.S. National Weather Service observation station\n"
+				                      "closest to the specified location.\n\n"
+				                      "  Command Line Options");
+
 	desc.add_options()
 		( "help", " generate help message" )
 		( "lat", bop::value<float>()->default_value( 38.99322, " 38.99322"), " latitude" )
 		( "lon", bop::value<float>()->default_value(-77.03207, "-77.03207"), " longitude" )
 	;
 
+	return desc;
+}
+
+bop::variables_map initVariablesMap(int argc, char* argv[], bop::options_description& desc) {
 	bop::variables_map vm;
 	bop::store(bop::parse_command_line(argc, argv, desc), vm);
 	bop::notify(vm);
+	return vm;
+}
+//////////////////////////////////////////////////////////////////////
 
-	if (vm.count("help")) {
-		cout << desc << endl;
-		return 1;
-	}
 
+int execMain(bop::variables_map& vm) {
 	try {
 		fieldsmap httpHeaderFields = { {CURLOPT_USERAGENT, "lwnws"}, {CURLOPT_HTTPHEADER, "Accept:application/geo+json"} };
 		Curler curl(&httpHeaderFields);
@@ -59,4 +66,20 @@ int main(int argc, char* argv[]) {
 	}
 
 	return 0;
+}
+
+
+int main(int argc, char* argv[]) {
+
+	///// Program Options ////////////////////////////////////////////////
+	bop::options_description desc = initDescription();
+	bop::variables_map vm = initVariablesMap(argc, argv, desc);
+
+	if (vm.count("help")) {
+		cout << desc << endl;
+		return 1;
+	}
+	//////////////////////////////////////////////////////////////////////
+
+	return execMain(vm);
 }
