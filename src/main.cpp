@@ -8,10 +8,11 @@
 #include <stdio.h>
 #include <iostream>
 
+#include <boost/json.hpp>
 #include <boost/program_options.hpp>
 #include <curl/curl.h>
 
-#include "Curler.h"
+#include "NWSDataRetriever.h"
 
 namespace bop = boost::program_options;
 
@@ -19,24 +20,14 @@ using std::cout;
 using std::endl;
 using std::to_string;
 
-string fv2str (bop::variables_map& vm, string arg) {
- // Convert a float cmdline arg value to a `setprecision(4)` string representation
- // as required by the National Weather Service API.
-	std::ostringstream ss;
-	ss << static_cast<float>( static_cast<int>( vm[arg].as<float>() * 10000 + .5 ) ) / 10000;
-	return ss.str();
-}
-
-
 ///// Initialization of Program Options //////////////////////////////
 bop::options_description initDescription() {
-	bop::options_description desc("\nGets the latest weather conditions at the\n"
-				                      "U.S. National Weather Service observation station\n"
-				                      "closest to the specified location.\n\n"
-				                      "  Command Line Options");
+
+	bop::options_description desc("\nGets the latest weather conditions at the U.S. National Weather Service\n"
+			                      "observation station closest to the specified location.\n\n  Command Line Options");
 
 	desc.add_options()
-		( "help", " generate help message" )
+		( "help,h", " generate help message" )
 		( "lat", bop::value<float>()->default_value( 38.99322, " 38.99322"), " latitude" )
 		( "lon", bop::value<float>()->default_value(-77.03207, "-77.03207"), " longitude" )
 	;
@@ -55,10 +46,9 @@ bop::variables_map initVariablesMap(int argc, char* argv[], bop::options_descrip
 
 int execMain(bop::variables_map& vm) {
 	try {
-		fieldsmap httpHeaderFields = { {CURLOPT_USERAGENT, "lwnws"}, {CURLOPT_HTTPHEADER, "Accept:application/geo+json"} };
-		Curler curl(&httpHeaderFields);
-
-		cout << curl.pull("https://api.weather.gov/points/" + fv2str(vm,"lat") + ',' + fv2str(vm,"lon")) << endl;
+		NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
+		string s = nwsDataRetriever.getLocalWeatherJSON();
+		cout << s << endl;
 	}
 	catch (std::runtime_error& e) {
 		std::cerr << e.what() << std::endl;
