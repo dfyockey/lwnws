@@ -22,6 +22,8 @@ const int null = 0;
 
 typedef std::multimap<CURLoption,string> fieldsmap;
 
+// Curler : Manages pulling resources from URLs using the libcurl Easy interface
+
 class Curler {
 public:
 	Curler(fieldsmap* fields=0);	// key-value pairs passed to the constructor in the fieldsmap
@@ -29,7 +31,8 @@ public:
 
 	string pull(string url);
 
-	virtual ~Curler();
+	virtual ~Curler();				// curl_easy_cleanup is executed in the dtor,
+									// so the user doesn't need to remember to call it
 
 private:
 	CURL* curl;

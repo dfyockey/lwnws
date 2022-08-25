@@ -9,26 +9,25 @@
 #include "Curler.h"
 
 
+///// public: ////////////////////////////////////////////////////////
+
 NWSDataRetriever::NWSDataRetriever(float lat, float lon) {
 	this->lat = fv2str(lat);
 	this->lon = fv2str(lon);
 }
-
-
 
 std::string NWSDataRetriever::getLocalWeatherJSON() {
 	fieldsmap httpHeaderFields = { {CURLOPT_USERAGENT, "lwnws"}, {CURLOPT_HTTPHEADER, "Accept:application/geo+json"} };
 	Curler curl(&httpHeaderFields);
 
 	return curl.pull("https://api.weather.gov/points/" + lat + ',' + lon);
-
 }
 
 NWSDataRetriever::~NWSDataRetriever() {
 	// TODO Auto-generated destructor stub
 }
 
-///// Private Methods ////////////////////////////////////////////////
+///// private: ///////////////////////////////////////////////////////
 
 string NWSDataRetriever::fv2str (float f) {
 	// Converts f to a string representation of a 4-significant-figure value,
