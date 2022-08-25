@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <boost/json.hpp>
 #include <boost/program_options.hpp>
 #include <curl/curl.h>
 
@@ -28,6 +27,7 @@ bop::options_description initDescription() {
 
 	desc.add_options()
 		( "help,h", " generate help message" )
+		( "json,j", " return unparsed JSON data for the specified location" )
 		( "lat", bop::value<float>()->default_value( 38.99322, " 38.99322"), " latitude" )
 		( "lon", bop::value<float>()->default_value(-77.03207, "-77.03207"), " longitude" )
 	;
@@ -43,12 +43,32 @@ bop::variables_map initVariablesMap(int argc, char* argv[], bop::options_descrip
 }
 //////////////////////////////////////////////////////////////////////
 
+// Pass references to nwsDataRetriever to avoid using an undefined instance
+// and to avoid need to implement a copy constructor to otherwise get around that problem.
+
+void printWeatherObject(NWSDataRetriever& nwsDataRetriever) {
+	boost::json::object localweather = nwsDataRetriever.getLocalWeather();
+
+	for (auto kv : localweather)
+		cout << kv.key() << ":" << kv.value() << "\n";
+
+	cout << std::flush;
+}
+
+void printWeather(NWSDataRetriever& nwsDataRetriever) {
+	double temp = nwsDataRetriever.getLocalWeather().at("properties").at("temperature").at("value").as_double();
+	cout << temp << "°C" << endl;
+}
 
 int execMain(bop::variables_map& vm) {
 	try {
 		NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
-		string s = nwsDataRetriever.getLocalWeatherJSON();
-		cout << s << endl;
+
+		if (vm.count("json"))
+			cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
+		else
+			printWeather(nwsDataRetriever);
+			//printWeatherObject(nwsDataRetriever);
 	}
 	catch (std::runtime_error& e) {
 		std::cerr << e.what() << std::endl;

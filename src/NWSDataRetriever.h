@@ -9,22 +9,27 @@
 #define SRC_NWSDATARETRIEVER_H_
 
 #include <string>
+#include <boost/json.hpp>
 
 using std::string;
+namespace bjs = boost::json;
 
 class NWSDataRetriever {
-public:
-	NWSDataRetriever(float lat, float lon);
-
-	string getLocalWeatherJSON();
-
-	virtual ~NWSDataRetriever();
-
 private:
 	string lat;
 	string lon;
+	bjs::parser jsonParser;
 
 	string fv2str (float f);
+	bjs::value parse(string json);
+
+public:
+	NWSDataRetriever(float lat, float lon);
+
+	string		getLocalWeatherJSON();
+	bjs::object getLocalWeather();
+
+	virtual ~NWSDataRetriever();
 };
 
 #endif /* SRC_NWSDATARETRIEVER_H_ */
