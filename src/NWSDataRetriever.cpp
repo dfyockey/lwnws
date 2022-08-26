@@ -50,10 +50,10 @@ string NWSDataRetriever::getLocalWeatherJSON() {
 	return weatherJSON;
 }
 
-bjs::object NWSDataRetriever::getLocalWeather() {
+Weather NWSDataRetriever::getLocalWeather() {
 	string weatherJSON = getLocalWeatherJSON();
 	bjs::value parsed_weather = parse(weatherJSON);
-	return parsed_weather.as_object();
+	return Weather(parsed_weather);
 }
 
 NWSDataRetriever::~NWSDataRetriever() {

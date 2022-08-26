@@ -56,8 +56,9 @@ void printWeatherObject(NWSDataRetriever& nwsDataRetriever) {
 }
 
 void printWeather(NWSDataRetriever& nwsDataRetriever) {
-	double temp = nwsDataRetriever.getLocalWeather().at("properties").at("temperature").at("value").as_double();
-	cout << temp << "°C" << endl;
+	Weather weather = nwsDataRetriever.getLocalWeather();
+	cout << "The current temperature is " << weather.tempC() << "°C, which is " << weather.tempF() << "°F" << endl;
+	cout << "The current pressure is " << weather.at("properties").at("barometricPressure").at("value").as_int64() << "Pa" << endl;
 }
 
 int execMain(bop::variables_map& vm) {

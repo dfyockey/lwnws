@@ -10,6 +10,7 @@
 
 #include <string>
 #include <boost/json.hpp>
+#include "Weather.h"
 
 using std::string;
 namespace bjs = boost::json;
@@ -26,8 +27,8 @@ private:
 public:
 	NWSDataRetriever(float lat, float lon);
 
-	string		getLocalWeatherJSON();
-	bjs::object getLocalWeather();
+	string	getLocalWeatherJSON();
+	Weather getLocalWeather();
 
 	virtual ~NWSDataRetriever();
 };
