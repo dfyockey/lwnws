@@ -12,14 +12,17 @@ double Weather::C2F(double degC) {
 	return degF;
 }
 
+double Weather::toDouble(const boost::json::value& v) {
+	return boost::json::value_to<double>(v);
+}
+
 /*
 Weather::Weather() {
 	// TODO Auto-generated constructor stub
-
 }
-*/
 
 Weather::~Weather() {
 	// TODO Auto-generated destructor stub
 }
+*/
 
