@@ -7,6 +7,7 @@
 
 #include "NWSDataRetriever.h"
 #include "Curler.h"
+#include "MyMath.h"
 
 
 ///// private: ///////////////////////////////////////////////////////
@@ -16,7 +17,7 @@ string NWSDataRetriever::fv2str (float f) {
 	// i.e. the limit of precision imposed by the National Weather Service API,
 	// to use in constructing a URL
 	std::ostringstream ss;
-	ss << static_cast<float>( static_cast<int>( f * 10000 + .5 ) ) / 10000;
+	ss << MyMath().roundFloat(f, 4);
 	return ss.str();
 }
 

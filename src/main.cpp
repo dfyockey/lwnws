@@ -56,9 +56,21 @@ void printWeatherObject(NWSDataRetriever& nwsDataRetriever) {
 }
 
 void printWeather(NWSDataRetriever& nwsDataRetriever) {
-	Weather weather = nwsDataRetriever.getLocalWeather();
-	cout << "The current temperature is " << weather.tempC() << "°C, which is " << weather.tempF() << "°F" << endl;
-	cout << "The current pressure is " << weather.at("properties").at("barometricPressure").at("value").as_int64() << "Pa" << endl;
+	Weather lw = nwsDataRetriever.getLocalWeather();
+	const string leftmargin = " ", spacer = "  ";
+
+	cout << leftmargin << lw.description() << "\n";
+	cout << leftmargin << lw.tempF(0) << "°F" << spacer << lw.pressurehPa() << "hPa" << spacer << lw.humidity(0) << "%RH" << spacer;
+
+	string winddir = lw.windDir();
+	cout << "Wind " << winddir;
+	if (winddir != "Calm") {
+		cout << " " << lw.windSpeedmph(0) << "mph";
+		double windGust = lw.windGustmph(0);
+		if ( windGust > 0 )
+			cout << " G " << windGust << "mph";
+	}
+	cout << endl;
 }
 
 int execMain(bop::variables_map& vm) {
@@ -82,7 +94,6 @@ int execMain(bop::variables_map& vm) {
 
 int main(int argc, char* argv[]) {
 
-	///// Program Options ////////////////////////////////////////////////
 	bop::options_description desc = initDescription();
 	bop::variables_map vm = initVariablesMap(argc, argv, desc);
 
@@ -90,7 +101,6 @@ int main(int argc, char* argv[]) {
 		cout << desc << endl;
 		return 1;
 	}
-	//////////////////////////////////////////////////////////////////////
 
 	return execMain(vm);
 }

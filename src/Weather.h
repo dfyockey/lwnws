@@ -8,19 +8,51 @@
 #ifndef SRC_WEATHER_H_
 #define SRC_WEATHER_H_
 
+#include <string>
+
 #include <boost/json/object.hpp>
 #include <boost/json/value_to.hpp>
 
+#include "MyMath.h"
+
+using std::string;
+
 class Weather: public boost::json::object {
 private:
+	bool calm;
+
     double C2F(double degC);
-    double toDouble(const boost::json::value& v);
+    double kph2mph(double kph);
+
+    double toDouble(const boost::json::value& v) { return boost::json::value_to<double>(v); }
+    double getDouble(string prop) { return toDouble(at("properties").at(prop).at("value")); }
+    double roundDouble(string prop, int precision=2) { return MyMath().roundDouble( getDouble(prop), precision); }
+
+    bool qc(string prop, string qcValue) { return (at("properties").at(prop).at("qualityControl").as_string() == qcValue); }
+
+    string windNamedDir ();
+	double windSpeed(int precision, bool kph=true);
 
 public:
-	Weather(boost::json::value parsed_weather) : object(parsed_weather.as_object()) {}
+	Weather(boost::json::value parsed_weather) : object(parsed_weather.as_object()), calm(false) {}
 
-	double tempC() { return toDouble(at("properties").at("temperature").at("value")); }
-	double tempF() { return C2F(tempC()); }
+	string description() { return at("properties").at("textDescription").as_string().c_str(); }
+
+	double humidity(int precision=2) { return roundDouble("relativeHumidity", precision); }
+
+	double tempC(int precision=2) { return roundDouble("temperature", precision); }
+	double tempF(int precision=2) { return MyMath().roundDouble( C2F(getDouble("temperature")), precision ); }
+
+	int pressurehPa() { return pressurePa()/100; }
+	int pressurePa()  { return at("properties").at("barometricPressure").at("value").as_int64(); }
+
+	string windDir();
+
+	double windSpeedkph(int precision=2) { return windSpeed(true);  };
+	double windSpeedmph(int precision=2) { return windSpeed(false); };
+
+	double windGustkph(int precision=2);
+	double windGustmph(int precision=2);
 
 	virtual ~Weather() {}
 };
