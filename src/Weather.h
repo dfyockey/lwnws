@@ -28,6 +28,8 @@ private:
     double getDouble(string prop) { return toDouble(at("properties").at(prop).at("value")); }
     double roundDouble(string prop, int precision=2) { return MyMath().roundDouble( getDouble(prop), precision); }
 
+    string getString(string prop) { return at("properties").at(prop).as_string().c_str(); }
+
     bool qc(string prop, string qcValue) { return (at("properties").at(prop).at("qualityControl").as_string() == qcValue); }
 
     string windNamedDir ();
@@ -36,7 +38,9 @@ private:
 public:
 	Weather(boost::json::value parsed_weather) : object(parsed_weather.as_object()), calm(false) {}
 
-	string description() { return at("properties").at("textDescription").as_string().c_str(); }
+	string description() { return getString("textDescription"); }
+
+	string timestamp() { return getString("timestamp"); }
 
 	double humidity(int precision=2) { return roundDouble("relativeHumidity", precision); }
 

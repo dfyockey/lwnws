@@ -59,7 +59,7 @@ void printWeather(NWSDataRetriever& nwsDataRetriever) {
 	Weather lw = nwsDataRetriever.getLocalWeather();
 	const string leftmargin = " ", spacer = "  ";
 
-	cout << leftmargin << lw.description() << "\n";
+	cout << leftmargin << lw.description() << spacer << lw.timestamp().substr(11,5) << " UTC" << "\n";
 	cout << leftmargin << lw.tempF(0) << "°F" << spacer << lw.pressurehPa() << "hPa" << spacer << lw.humidity(0) << "%RH" << spacer;
 
 	string winddir = lw.windDir();
