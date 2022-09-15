@@ -11,6 +11,7 @@
 #include <boost/program_options.hpp>
 #include <curl/curl.h>
 
+#include "Cache.h"
 #include "NWSDataRetriever.h"
 
 namespace bop = boost::program_options;
@@ -71,6 +72,9 @@ void printWeather(NWSDataRetriever& nwsDataRetriever) {
 			cout << " G " << windGust << "mph";
 	}
 	cout << endl;
+
+	Cache cached(lw);
+	cout << "\n" << cached.dump() << endl;
 }
 
 int execMain(bop::variables_map& vm) {
@@ -93,7 +97,7 @@ int execMain(bop::variables_map& vm) {
 
 
 int main(int argc, char* argv[]) {
-
+	cout << argv[0] << endl;
 	bop::options_description desc = initDescription();
 	bop::variables_map vm = initVariablesMap(argc, argv, desc);
 
