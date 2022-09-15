@@ -32,8 +32,10 @@ private:
 
     bool qc(string prop, string qcValue) { return (at("properties").at(prop).at("qualityControl").as_string() == qcValue); }
 
+    double windSetCalm();
     string windNamedDir ();
 	double windSpeed(int precision, bool kph=true);
+	double windGust(int precision, bool mph);
 
 public:
 	Weather(boost::json::value parsed_weather) : object(parsed_weather.as_object()), calm(false) {}
@@ -52,8 +54,8 @@ public:
 
 	string windDir();
 
-	double windSpeedkph(int precision=2) { return windSpeed(true);  };
-	double windSpeedmph(int precision=2) { return windSpeed(false); };
+	double windSpeedkph(int precision=2);
+	double windSpeedmph(int precision=2);
 
 	double windGustkph(int precision=2);
 	double windGustmph(int precision=2);

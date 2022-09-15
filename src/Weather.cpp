@@ -9,7 +9,6 @@
 
 #include <array>
 
-
 ///// private: ///////////////////////////////////////////////////////
 
 double Weather::C2F(double degC) {
@@ -40,61 +39,80 @@ string Weather::windNamedDir () {
 	return namedDir[index];
 }
 
-double Weather::windSpeed(int precision, bool kph) {
-	double speed = getDouble("windSpeed");
-	calm = (speed == 0);
+double Weather::windSetCalm() {
+	double speed = 0;
 
-	if (calm) {
-		speed = 0;
+	try {
+		speed = getDouble("windSpeed");
+		calm = (speed == 0);
 	}
-	else {
+	catch (...) {
+		calm = false;
+	}
+
+	return speed;
+}
+
+double Weather::windSpeed(int precision, bool kph) {
+	double speed = windSetCalm();	// Called in both windSpeed and windDir methods
+									// since user may call speed or direction methods in any order.
+	if (!calm) {
 		if (kph)
 			speed = MyMath().roundDouble(speed, precision);
-		else
+		else //mph
 			speed = MyMath().roundDouble(kph2mph(speed), precision);
 	}
 
 	return speed;
 }
 
-/*
-double Weather::toDouble(const boost::json::value& v) {
-	return boost::json::value_to<double>(v);
-}
-*/
+double Weather::windGust(int precision, bool kph) {
+	double gust = 0;
 
+	if ( !qc("windGust","Z") && !qc("windGust","X") ) {
+		if (kph)
+			gust = roundDouble("windGust", precision);
+		else //kph
+			gust = MyMath().roundDouble(kph2mph(getDouble("windGust")), precision);
+	}
+
+	return gust;
+}
 
 ///// public: ////////////////////////////////////////////////////////
 
 string Weather::windDir() {
 	string result;
 
-	calm = (getDouble("windSpeed") == 0);
+	windSetCalm();		// Called in both windSpeed and windDir methods
+						// since user may call speed or direction methods in any order.
 
 	if (calm)
 		result = "Calm";
 	else if (qc("windDirection","Z"))
 		result = "Vrbl";
+	else if (qc("windDirection","X"))
+		result = "Unkn";
 	else
 		result = windNamedDir();
 
 	return result;
 }
 
+double Weather::windSpeedkph(int precision) {
+	return windSpeed(precision, true);
+}
+
+double Weather::windSpeedmph(int precision) {
+	return windSpeed(precision, false);
+}
+
 double Weather::windGustkph(int precision) {
-	//return (qc("windGust","Z")) ? 0 : roundDouble("windGust", precision);
-
-	if (qc("windGust","Z"))
-		return 0;
-
-	return roundDouble("windGust", precision);
+	return windGust(precision, true);
 }
 
 double Weather::windGustmph(int precision) {
-	if (qc("windGust","Z"))
-		return 0;
-
-	return MyMath().roundDouble(kph2mph(getDouble("windGust")), precision);
+	return windGust(precision, false);
 }
 
 /*
