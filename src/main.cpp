@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <iostream>
 
+#include <boost/json/src.hpp>
 #include <boost/program_options.hpp>
 #include <curl/curl.h>
 

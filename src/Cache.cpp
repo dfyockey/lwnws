@@ -22,7 +22,14 @@ void Cache::loadcache() {
 }
 
 void Cache::reconcile() {
-
+	// Compare parsed_weather to cached_parsed_weather
+	// and replace invalid values in parsed_weather with
+	// valid values in cached_parsed_weather.
+	//
+	// Then, save the modified parsed_weather to the cache file.
+	//
+	// Finally, return the modified parsed_weather for use in
+	// determining values to be displayed.
 }
 
 ///// public: ////////////////////////////////////////////////////////
