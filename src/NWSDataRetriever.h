@@ -10,19 +10,18 @@
 
 #include <string>
 #include <boost/json.hpp>
+
 #include "Weather.h"
+#include "Parser.h"
 
 using std::string;
-namespace bjs = boost::json;
 
 class NWSDataRetriever {
 private:
 	string lat;
 	string lon;
-	bjs::parser jsonParser;
-
+	Parser parser;
 	string fv2str (float f);
-	bjs::value parse(string json);
 
 public:
 	NWSDataRetriever(float lat, float lon);
