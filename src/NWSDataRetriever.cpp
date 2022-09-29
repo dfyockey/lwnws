@@ -9,6 +9,8 @@
 #include "Curler.h"
 #include "MyMath.h"
 
+namespace bjs = boost::json;
+
 
 ///// private: ///////////////////////////////////////////////////////
 
@@ -19,12 +21,6 @@ string NWSDataRetriever::fv2str (float f) {
 	std::ostringstream ss;
 	ss << MyMath().roundFloat(f, 4);
 	return ss.str();
-}
-
-boost::json::value NWSDataRetriever::parse(string json) {
-	jsonParser.reset();
-	jsonParser.write(json);
-	return jsonParser.release();
 }
 
 
@@ -40,11 +36,11 @@ string NWSDataRetriever::getLocalWeatherJSON() {
 	Curler curl(&httpHeaderFields);
 
 	string pointsJSON = curl.pull("https://api.weather.gov/points/" + lat + ',' + lon);
-	bjs::value parsed_points = parse(pointsJSON);
+	bjs::value parsed_points = parser.parse(pointsJSON);
 	string stationsURL = parsed_points.at("properties").at("observationStations").as_string().c_str();
 
 	string stationsJSON = curl.pull(stationsURL);
-	bjs::value parsed_stations = parse(stationsJSON);
+	bjs::value parsed_stations = parser.parse(stationsJSON);
 	string stationidURL = parsed_stations.at("features").at(0).at("id").as_string().c_str();
 
 	string weatherJSON = curl.pull(stationidURL + "/observations/latest");
@@ -53,7 +49,7 @@ string NWSDataRetriever::getLocalWeatherJSON() {
 
 Weather NWSDataRetriever::getLocalWeather() {
 	string weatherJSON = getLocalWeatherJSON();
-	bjs::value parsed_weather = parse(weatherJSON);
+	bjs::value parsed_weather = parser.parse(weatherJSON);
 	return Weather(parsed_weather);
 }
 
