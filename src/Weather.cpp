@@ -21,7 +21,41 @@ double Weather::kph2mph(double kph) {
 	return mph;
 }
 
-string Weather::windNamedDir () {
+double Weather::toDouble(const boost::json::value& v) {
+	return boost::json::value_to<double>(v);
+}
+
+double Weather::getDouble(string prop) {
+	return toDouble(at("properties").at(prop).at("value"));
+}
+
+double Weather::roundDouble(string prop, int precision /*=2*/) {
+	return MyMath().roundDouble( getDouble(prop), precision);
+}
+
+string Weather::getString(string prop) {
+	return at("properties").at(prop).as_string().c_str();
+}
+
+bool Weather::qc(string prop, string qcValue) {
+	return (at("properties").at(prop).at("qualityControl").as_string() == qcValue);
+}
+
+double Weather::windSetCalm() {
+	double speed = 0;
+
+	try {
+		speed = getDouble("windSpeed");
+		calm = (speed == 0);
+	}
+	catch (...) {
+		calm = false;
+	}
+
+	return speed;
+}
+
+string Weather::windNamedDir() {
 	std::array<string,8> namedDir = {"N","NE","E","SE","S","SW","W","NW"};
 
 	/*
@@ -39,21 +73,7 @@ string Weather::windNamedDir () {
 	return namedDir[index];
 }
 
-double Weather::windSetCalm() {
-	double speed = 0;
-
-	try {
-		speed = getDouble("windSpeed");
-		calm = (speed == 0);
-	}
-	catch (...) {
-		calm = false;
-	}
-
-	return speed;
-}
-
-double Weather::windSpeed(int precision, bool kph) {
+double Weather::windSpeed(int precision, bool kph /*=true*/) {
 	double speed = windSetCalm();	// Called in both windSpeed and windDir methods
 									// since user may call speed or direction methods in any order.
 	if (!calm) {
@@ -81,11 +101,39 @@ double Weather::windGust(int precision, bool kph) {
 
 ///// public: ////////////////////////////////////////////////////////
 
+string Weather::description() {
+	return getString("textDescription");
+}
+
+string Weather::timestamp() {
+	return getString("timestamp");
+}
+
+double Weather::humidity(int precision /*=2*/) {
+	return roundDouble("relativeHumidity", precision);
+}
+
+double Weather::tempC(int precision /*=2*/) {
+	return roundDouble("temperature", precision);
+}
+
+double Weather::tempF(int precision/*=2*/) {
+	return MyMath().roundDouble( C2F(getDouble("temperature")), precision );
+}
+
+int Weather::pressurehPa() {
+	return pressurePa()/100;
+}
+
+int Weather::pressurePa() {
+	return at("properties").at("barometricPressure").at("value").as_int64();
+}
+
 string Weather::windDir() {
 	string result;
 
-	windSetCalm();		// Called in both windSpeed and windDir methods
-						// since user may call speed or direction methods in any order.
+	windSetCalm();		// Called in both windSpeed and windDir methods since
+						// user may call speed and direction methods in any order.
 
 	if (calm)
 		result = "Calm";
@@ -114,14 +162,4 @@ double Weather::windGustkph(int precision) {
 double Weather::windGustmph(int precision) {
 	return windGust(precision, false);
 }
-
-/*
-Weather::Weather() {
-	// TODO Auto-generated constructor stub
-}
-
-Weather::~Weather() {
-	// TODO Auto-generated destructor stub
-}
-*/
 
