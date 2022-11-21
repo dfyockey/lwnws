@@ -2,7 +2,7 @@
  * NWSDataRetriever.h
  *
  *  Created on: Aug 24, 2022
- *      Author: David
+ *      Author: David Yockey
  */
 
 #ifndef SRC_NWSDATARETRIEVER_H_

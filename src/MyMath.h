@@ -2,13 +2,16 @@
  * MyMath.h
  *
  *  Created on: Aug 27, 2022
- *      Author: David
+ *      Author: David Yockey
  */
 
 #ifndef SRC_MYMATH_H_
 #define SRC_MYMATH_H_
 
 class MyMath {
+private:
+	static void okPrecision (std::string methodname, int precision);
+
 public:
 	MyMath();
 

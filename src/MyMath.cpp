@@ -2,17 +2,21 @@
  * MyMath.cpp
  *
  *  Created on: Aug 27, 2022
- *      Author: David
+ *      Author: David Yockey
  */
 
 #include <stdexcept>
 #include <string>
 #include "MyMath.h"
 
-void okPrecision (std::string methodname, int precision) {
+///// private ////////////////////////////////////////////////////////
+
+void MyMath::okPrecision (std::string methodname, int precision) {
 	if ( precision < 0 )
 		throw std::range_error("Illegal precision < 0 in call to MyMath::" + methodname);
 }
+
+///// public /////////////////////////////////////////////////////////
 
 MyMath::MyMath() {
 	// TODO Auto-generated constructor stub

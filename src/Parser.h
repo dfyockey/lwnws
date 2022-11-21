@@ -2,7 +2,7 @@
  * Parser.hpp
  *
  *  Created on: Sep 29, 2022
- *      Author: David
+ *      Author: David Yockey
  */
 
 #ifndef SRC_PARSER_H_
@@ -16,6 +16,7 @@ namespace bjs = boost::json;
 class Parser {
 private:
 	bjs::parser jsonParser;
+
 public:
 	bjs::value parse(std::string json);
 };

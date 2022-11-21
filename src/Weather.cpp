@@ -2,7 +2,7 @@
  * Weather.cpp
  *
  *  Created on: Aug 26, 2022
- *      Author: David
+ *      Author: David Yockey
  */
 
 #include "Weather.h"

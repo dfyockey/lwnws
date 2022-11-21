@@ -2,7 +2,7 @@
  * NWSDataRetriever.cpp
  *
  *  Created on: Aug 24, 2022
- *      Author: David
+ *      Author: David Yockey
  */
 
 #include "NWSDataRetriever.h"
