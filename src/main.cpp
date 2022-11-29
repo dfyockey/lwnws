@@ -56,8 +56,7 @@ void printWeatherObject(NWSDataRetriever& nwsDataRetriever) {
 	cout << std::flush;
 }
 
-void printWeather(NWSDataRetriever& nwsDataRetriever) {
-	Weather lw = nwsDataRetriever.getLocalWeather();
+void printWeather(Weather &lw) {
 	const string leftmargin = " ", spacer = "  ";
 
 	cout << leftmargin << lw.description() << spacer << lw.timestamp().substr(11,5) << " UTC" << "\n";
@@ -80,9 +79,15 @@ int execMain(bop::variables_map& vm) {
 
 		if (vm.count("json"))
 			cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
-		else
-			printWeather(nwsDataRetriever);
+		else {
+			Weather lw = nwsDataRetriever.getLocalWeather();
+			printWeather(lw);
+			cout << "\n" << endl;
+			Weather cw = nwsDataRetriever.getCacheWeather();
+			printWeather(cw);
+
 			//printWeatherObject(nwsDataRetriever);
+		}
 	}
 	catch (std::runtime_error& e) {
 		std::cerr << e.what() << std::endl;

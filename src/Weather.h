@@ -38,6 +38,7 @@ private:
 	double windGust		(int precision, bool mph);
 
 public:
+	Weather() : object(), calm(false) {}
 	Weather(boost::json::value parsed_weather) : object(parsed_weather.as_object()), calm(false) {}
 
 	string description	();

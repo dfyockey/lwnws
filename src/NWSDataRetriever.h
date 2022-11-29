@@ -22,14 +22,16 @@ private:
 	string lon;
 	Parser parser;
 	string fv2str (float f);
+	string makeCachefilePath(string appname, string cachefilename);
 
 public:
 	NWSDataRetriever(float lat, float lon);
 
 	string	getLocalWeatherJSON();
 	Weather getLocalWeather();
+	Weather getCacheWeather(string cachefile = "");
 
-	virtual ~NWSDataRetriever();
+	virtual ~NWSDataRetriever() {};
 };
 
 #endif /* SRC_NWSDATARETRIEVER_H_ */

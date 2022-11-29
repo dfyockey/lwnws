@@ -5,9 +5,12 @@
  *      Author: David Yockey
  */
 
+#include <cstdlib>
+
 #include "NWSDataRetriever.h"
 #include "Curler.h"
 #include "MyMath.h"
+#include "Cache.h"
 
 namespace bjs = boost::json;
 
@@ -21,6 +24,14 @@ string NWSDataRetriever::fv2str (float f) {
 	std::ostringstream ss;
 	ss << MyMath().roundFloat(f, 4);
 	return ss.str();
+}
+
+string NWSDataRetriever::makeCachefilePath(string appname, string cachefilename) {
+	// Returns the default cachefile path `$HOME/.<appname>/<cachefilename>`,
+	// where $HOME is the value of the HOME environment variable.
+
+	string HOME(getenv("HOME"));
+	return HOME + "/." + appname + "/" + cachefilename;
 }
 
 
@@ -53,7 +64,14 @@ Weather NWSDataRetriever::getLocalWeather() {
 	return Weather(parsed_weather);
 }
 
-NWSDataRetriever::~NWSDataRetriever() {
-	// TODO Auto-generated destructor stub
-}
+Weather NWSDataRetriever::getCacheWeather(string cachefile) {
+	if (cachefile == "")
+		cachefile = makeCachefilePath("lwnws", "lwnwsCache.json");
 
+	Cache cache(cachefile);
+	Weather weather;
+
+	cache.load(weather);
+
+	return weather;
+}
