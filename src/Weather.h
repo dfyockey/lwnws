@@ -15,6 +15,7 @@
 
 #include "MyMath.h"
 
+namespace bjs = boost::json;
 using std::string;
 
 class Weather: public boost::json::object {
@@ -28,8 +29,6 @@ private:
     double getDouble	(string prop);
     double roundDouble	(string prop, int precision=2);
 
-    string getString (string prop);
-
     bool qc (string prop, string qcValue);
 
     double windSetCalm	();
@@ -40,6 +39,15 @@ private:
 public:
 	Weather() : object(), calm(false) {}
 	Weather(boost::json::value parsed_weather) : object(parsed_weather.as_object()), calm(false) {}
+
+	// JSON "properties" of NWS data in the parent boost::json::object used in methods of this class.
+	// Purpose: to enable iteration thru the properties in combining current and cached weather.
+	const std::array<const string, 8> properties = {
+			"timestamp", "textDescription", "temperature", "windDirection",
+			"windSpeed", "windGust", "barometricPressure", "relativeHumidity"
+	};
+
+    string getString (string prop);		// Needs to be public for access by NWSDataCombiner.
 
 	string description	();
 	string timestamp	();

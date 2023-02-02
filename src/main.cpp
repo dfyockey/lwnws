@@ -13,6 +13,11 @@
 #include <curl/curl.h>
 
 #include "NWSDataRetriever.h"
+#include "NWSDataCombiner.h"
+#include "Cache.h"
+
+#include <boost/json/object.hpp>
+#include <boost/json/value.hpp>
 
 namespace bop = boost::program_options;
 
@@ -59,7 +64,7 @@ void printWeatherObject(NWSDataRetriever& nwsDataRetriever) {
 void printWeather(Weather &lw) {
 	const string leftmargin = " ", spacer = "  ";
 
-	cout << leftmargin << lw.description() << spacer << lw.timestamp().substr(11,5) << " UTC" << "\n";
+	cout << leftmargin << lw.description() << spacer << (( lw.timestamp().size() > 11 ) ? lw.timestamp().substr(11,5) : "?") << " UTC" << "\n";
 	cout << leftmargin << lw.tempF(0) << "°F" << spacer << lw.pressurehPa() << "hPa" << spacer << lw.humidity(0) << "%RH" << spacer;
 
 	string winddir = lw.windDir();
@@ -80,13 +85,30 @@ int execMain(bop::variables_map& vm) {
 		if (vm.count("json"))
 			cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
 		else {
+			cout << "Current Weather..." << endl;
 			Weather lw = nwsDataRetriever.getLocalWeather();
-			printWeather(lw);
+			try {
+				printWeather(lw);
+			} catch (std::exception &e) {
+				cout << e.what() << endl;
+			}
+
+//			cout << "Current Weather (test)..." << endl;
+//			Cache cache("/home/David/.lwnws/lwnwsCurrent.test.json");
+//			Weather lw;
+//			cache.load(lw);
+//			printWeather(lw);
 			cout << "\n" << endl;
+			cout << "Cached Weather (test)..." << endl;
 			Weather cw = nwsDataRetriever.getCacheWeather();
 			printWeather(cw);
 
 			//printWeatherObject(nwsDataRetriever);
+
+
+			NWSDataCombiner nwsDataCombiner(lw, cw);
+			cout << "\nCombined Weather (test)..." << endl;
+			printWeather(lw);
 		}
 	}
 	catch (std::runtime_error& e) {

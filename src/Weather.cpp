@@ -8,6 +8,7 @@
 #include "Weather.h"
 
 #include <array>
+#include <iostream>
 
 ///// private: ///////////////////////////////////////////////////////
 
@@ -31,10 +32,6 @@ double Weather::getDouble(string prop) {
 
 double Weather::roundDouble(string prop, int precision /*=2*/) {
 	return MyMath().roundDouble( getDouble(prop), precision);
-}
-
-string Weather::getString(string prop) {
-	return at("properties").at(prop).as_string().c_str();
 }
 
 bool Weather::qc(string prop, string qcValue) {
@@ -101,12 +98,18 @@ double Weather::windGust(int precision, bool kph) {
 
 ///// public: ////////////////////////////////////////////////////////
 
+string Weather::getString(string prop) {
+	return at("properties").at(prop).as_string().c_str();
+}
+
 string Weather::description() {
 	return getString("textDescription");
 }
 
 string Weather::timestamp() {
-	return getString("timestamp");
+	string s = getString("timestamp");
+	const int UTC_TIME_POS = 11;
+	return ((!s.empty() && s.size() >= UTC_TIME_POS) ? s : "");
 }
 
 double Weather::humidity(int precision /*=2*/) {
@@ -137,8 +140,8 @@ string Weather::windDir() {
 
 	if (calm)
 		result = "Calm";
-	else if (qc("windDirection","Z"))
-		result = "Vrbl";
+	else if (qc("windDirection","Z"))	// Should be true iff windSpeed value > 0
+		result = "Vrbl";				// If just "Z", then result should = ""
 	else if (qc("windDirection","X"))
 		result = "Unkn";
 	else
