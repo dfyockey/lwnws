@@ -8,6 +8,7 @@
 #include <cstdlib>
 
 #include "NWSDataRetriever.h"
+#include "appdefaults.h"
 #include "Curler.h"
 #include "MyMath.h"
 #include "Cache.h"
@@ -65,8 +66,8 @@ Weather NWSDataRetriever::getLocalWeather() {
 }
 
 Weather NWSDataRetriever::getCacheWeather(string cachefile) {
-	if (cachefile == "")
-		cachefile = makeCachefilePath("lwnws", "lwnwsCache.json");
+	if (cachefile.empty())
+		cachefile = makeCachefilePath(appdefs::APPNAME, appdefs::CACHENAME);
 
 	Cache cache(cachefile);
 	Weather weather;
