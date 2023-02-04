@@ -20,8 +20,6 @@ using std::string;
 
 class Weather: public boost::json::object {
 private:
-	bool calm;
-
     double C2F		(double degC);
     double kph2mph	(double kph);
 
@@ -29,16 +27,17 @@ private:
     double getDouble	(string prop);
     double roundDouble	(string prop, int precision=2);
 
-    bool qc (string prop, string qcValue);
+    string qualityControl(string prop);
 
     double windSetCalm	();
     string windNamedDir	();
+    double getWindSpeed ();
 	double windSpeed	(int precision, bool kph=true);
 	double windGust		(int precision, bool mph);
 
 public:
-	Weather() : object(), calm(false) {}
-	Weather(boost::json::value parsed_weather) : object(parsed_weather.as_object()), calm(false) {}
+	Weather() : object() {}
+	Weather(boost::json::value parsed_weather) : object(parsed_weather.as_object()) {}
 
 	// JSON "properties" of NWS data in the parent boost::json::object used in methods of this class.
 	// Purpose: to enable iteration thru the properties in combining current and cached weather.

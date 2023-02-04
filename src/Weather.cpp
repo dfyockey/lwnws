@@ -6,6 +6,7 @@
  */
 
 #include "Weather.h"
+#include "util/jsonutil.hpp"
 
 #include <array>
 #include <iostream>
@@ -34,19 +35,17 @@ double Weather::roundDouble(string prop, int precision /*=2*/) {
 	return MyMath().roundDouble( getDouble(prop), precision);
 }
 
-bool Weather::qc(string prop, string qcValue) {
-	return (at("properties").at(prop).at("qualityControl").as_string() == qcValue);
+string Weather::qualityControl(string prop) {
+	return jsonutil::getstring(*this, {"properties", prop, "qualityControl"});
 }
 
-double Weather::windSetCalm() {
+double Weather::getWindSpeed() {
 	double speed = 0;
 
 	try {
 		speed = getDouble("windSpeed");
-		calm = (speed == 0);
-	}
-	catch (...) {
-		calm = false;
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
 	}
 
 	return speed;
@@ -71,9 +70,9 @@ string Weather::windNamedDir() {
 }
 
 double Weather::windSpeed(int precision, bool kph /*=true*/) {
-	double speed = windSetCalm();	// Called in both windSpeed and windDir methods
-									// since user may call speed or direction methods in any order.
-	if (!calm) {
+	double speed = getWindSpeed();
+
+	if ( speed > 0 ) {
 		if (kph)
 			speed = MyMath().roundDouble(speed, precision);
 		else //mph
@@ -85,8 +84,9 @@ double Weather::windSpeed(int precision, bool kph /*=true*/) {
 
 double Weather::windGust(int precision, bool kph) {
 	double gust = 0;
+	string qc = qualityControl("windGust");
 
-	if ( !qc("windGust","Z") && !qc("windGust","X") ) {
+	if ( qc != "Z" && qc != "X" ) {
 		if (kph)
 			gust = roundDouble("windGust", precision);
 		else //kph
@@ -134,16 +134,16 @@ int Weather::pressurePa() {
 
 string Weather::windDir() {
 	string result;
+	string qc = qualityControl("windDirection");
 
-	windSetCalm();		// Called in both windSpeed and windDir methods since
-						// user may call speed and direction methods in any order.
-
-	if (calm)
-		result = "Calm";
-	else if (qc("windDirection","Z"))	// Should be true iff windSpeed value > 0
-		result = "Vrbl";				// If just "Z", then result should = ""
-	else if (qc("windDirection","X"))
-		result = "Unkn";
+	if ( getWindSpeed() == 0 ) {
+		if ( qc != "Z" && qc != "X")
+			result = "Calm";
+		else
+			result = "";
+	}
+	else if ( qc == "Z" )
+		result = "Vrbl";
 	else
 		result = windNamedDir();
 
