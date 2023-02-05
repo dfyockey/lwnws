@@ -17,7 +17,18 @@ namespace fsys = std::filesystem;
 
 ///// private: ///////////////////////////////////////////////////////
 
+string Cache::makeCachefilePath(string appname, string cachefilename) {
+	// Returns the default cachefile path `$HOME/.<appname>/<cachefilename>`,
+	// where $HOME is the value of the HOME environment variable.
+
+	string HOME(getenv("HOME"));
+	return HOME + "/." + appname + "/" + cachefilename;
+}
+
 ///// public: ////////////////////////////////////////////////////////
+Cache::Cache() {
+	cachefile = makeCachefilePath(appdefs::APPNAME, appdefs::CACHENAME);
+}
 
 void Cache::load (bjs::object &obj) {
 	/*

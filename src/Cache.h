@@ -10,6 +10,7 @@
 
 #include <string>
 #include <boost/json/object.hpp>
+#include "appdefaults.h"
 #include "Parser.h"	// defines namespace bjs
 
 using std::string;
@@ -20,8 +21,11 @@ private:
 	Parser			  parser;
 	std::stringstream cache_ss;
 
+	string makeCachefilePath(string appname, string cachefilename);
+
 public:
 	Cache(string cachefile) : cachefile(cachefile) {};
+	Cache();
 
 	void load(bjs::object &obj);
 	void save(bjs::object &obj);

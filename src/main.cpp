@@ -81,6 +81,7 @@ void printWeather(Weather &lw) {
 int execMain(bop::variables_map& vm) {
 	try {
 		NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
+		Cache cache;
 
 		if (vm.count("json"))
 			cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
@@ -98,9 +99,8 @@ int execMain(bop::variables_map& vm) {
 //			Weather lw;
 //			cache.load(lw);
 //			printWeather(lw);
-			cout << "\n" << endl;
-			cout << "Cached Weather (test)..." << endl;
-			Weather cw = nwsDataRetriever.getCacheWeather();
+			cout << "\nCached Weather (test)..." << endl;
+			Weather cw = nwsDataRetriever.getCacheWeather(cache);
 			printWeather(cw);
 
 			//printWeatherObject(nwsDataRetriever);
@@ -109,6 +109,10 @@ int execMain(bop::variables_map& vm) {
 			NWSDataCombiner nwsDataCombiner(lw, cw);
 			cout << "\nCombined Weather (test)..." << endl;
 			printWeather(lw);
+
+			cout << "\nSaving to Cache..." << endl;
+			cache.save(lw);
+			cout << "Saved! :)" << endl;
 		}
 	}
 	catch (std::runtime_error& e) {

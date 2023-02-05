@@ -13,6 +13,7 @@
 
 #include "Weather.h"
 #include "Parser.h"
+#include "Cache.h"
 
 using std::string;
 
@@ -22,14 +23,13 @@ private:
 	string lon;
 	Parser parser;
 	string fv2str (float f);
-	string makeCachefilePath(string appname, string cachefilename);
 
 public:
 	NWSDataRetriever(float lat, float lon);
 
 	string	getLocalWeatherJSON();
 	Weather getLocalWeather();
-	Weather getCacheWeather(string cachefile = "");
+	Weather getCacheWeather(Cache& cache);
 
 	virtual ~NWSDataRetriever() {};
 };
