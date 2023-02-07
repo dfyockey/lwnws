@@ -14,12 +14,14 @@
 
 #include "NWSDataRetriever.h"
 #include "NWSDataCombiner.h"
+#include "DisplayFormatter.h"
 #include "Cache.h"
 
 #include <boost/json/object.hpp>
 #include <boost/json/value.hpp>
 
 namespace bop = boost::program_options;
+namespace dfo = DisplayFormatter;
 
 using std::cout;
 using std::endl;
@@ -49,35 +51,6 @@ bop::variables_map initVariablesMap(int argc, char* argv[], bop::options_descrip
 }
 //////////////////////////////////////////////////////////////////////
 
-// Pass references to nwsDataRetriever to avoid using an undefined instance
-// and to avoid need to implement a copy constructor to otherwise get around that problem.
-
-void printWeatherObject(NWSDataRetriever& nwsDataRetriever) {
-	boost::json::object localweather = nwsDataRetriever.getLocalWeather();
-
-	for (auto kv : localweather)
-		cout << kv.key() << ":" << kv.value() << "\n";
-
-	cout << std::flush;
-}
-
-void printWeather(Weather &lw) {
-	const string leftmargin = " ", spacer = "  ";
-
-	cout << leftmargin << lw.description() << spacer << (( lw.timestamp().size() > 11 ) ? lw.timestamp().substr(11,5) : "?") << " UTC" << "\n";
-	cout << leftmargin << lw.tempF(0) << "°F" << spacer << lw.pressurehPa() << "hPa" << spacer << lw.humidity(0) << "%RH" << spacer;
-
-	string winddir = lw.windDir();
-	cout << "Wind " << winddir;
-	if (winddir != "Calm") {
-		cout << " " << lw.windSpeedmph(0) << "mph";
-		double windGust = lw.windGustmph(0);
-		if ( windGust > 0 )
-			cout << " G " << windGust << "mph";
-	}
-	cout << endl;
-}
-
 int execMain(bop::variables_map& vm) {
 	try {
 		NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
@@ -89,9 +62,9 @@ int execMain(bop::variables_map& vm) {
 			cout << "Current Weather..." << endl;
 			Weather lw = nwsDataRetriever.getLocalWeather();
 			try {
-				printWeather(lw);
+				cout << dfo::formatWeather(lw);
 			} catch (std::exception &e) {
-				cout << e.what() << endl;
+				std::cerr << e.what() << endl;
 			}
 
 //			cout << "Current Weather (test)..." << endl;
@@ -101,14 +74,14 @@ int execMain(bop::variables_map& vm) {
 //			printWeather(lw);
 			cout << "\nCached Weather (test)..." << endl;
 			Weather cw = nwsDataRetriever.getCacheWeather(cache);
-			printWeather(cw);
+			cout << dfo::formatWeather(cw);
 
 			//printWeatherObject(nwsDataRetriever);
 
 
 			NWSDataCombiner nwsDataCombiner(lw, cw);
 			cout << "\nCombined Weather (test)..." << endl;
-			printWeather(lw);
+			cout << dfo::formatWeather(lw);
 
 			cout << "\nSaving to Cache..." << endl;
 			cache.save(lw);
