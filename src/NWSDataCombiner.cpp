@@ -12,11 +12,13 @@
 #include "NWSDataCombiner.h"
 #include "util/jsonutil.hpp"
 
-NWSDataCombiner::NWSDataCombiner(Weather& currentweather, Weather& cachedweather) : currentweather(currentweather), cachedweather(cachedweather) {
-	combine();
-}
+///// private: ///////////////////////////////////////////////////////
 
-void NWSDataCombiner::combine() {
+///// public: ////////////////////////////////////////////////////////
+
+NWSDataCombiner::NWSDataCombiner() {}
+
+void NWSDataCombiner::combine(Weather& currentweather, Weather& cachedweather) {
 	for (std::string property : currentweather.properties) {
 		/* Handle properties that have no quality control descriptors */
 		if ( property == "timestamp" || property == "textDescription" ) {

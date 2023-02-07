@@ -70,7 +70,7 @@ int execMain(bop::variables_map& vm) {
 			Weather cw = nwsDataRetriever.getCacheWeather(cache);
 			cout << dfo::formatWeather(cw);
 
-			NWSDataCombiner nwsDataCombiner(lw, cw);
+			NWSDataCombiner::combine(lw, cw);
 			cout << "\nCombined Weather (test)..." << endl;
 			cout << dfo::formatWeather(lw);
 

@@ -12,13 +12,12 @@
 
 class NWSDataCombiner {
 private:
-	Weather& currentweather;
-	Weather& cachedweather;
-
-	void combine();
 
 public:
-	NWSDataCombiner(Weather& currentweather, Weather& cacheweather);
+	NWSDataCombiner();
+
+	static void combine(Weather& currentweather, Weather& cachedweather);
+
 	virtual ~NWSDataCombiner() {};
 };
 
