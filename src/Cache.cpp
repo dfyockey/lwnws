@@ -26,6 +26,9 @@ string Cache::makeCachefilePath(string appname, string cachefilename) {
 }
 
 ///// public: ////////////////////////////////////////////////////////
+
+Cache::Cache(string cachefile) : cachefile(cachefile) {};
+
 Cache::Cache() {
 	cachefile = makeCachefilePath(appdefs::APPNAME, appdefs::CACHENAME);
 }

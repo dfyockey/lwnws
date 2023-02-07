@@ -5,7 +5,6 @@
  *      Author: David Yockey
  */
 
-#include <stdio.h>
 #include <iostream>
 
 #include <boost/json/src.hpp>
@@ -67,17 +66,9 @@ int execMain(bop::variables_map& vm) {
 				std::cerr << e.what() << endl;
 			}
 
-//			cout << "Current Weather (test)..." << endl;
-//			Cache cache("/home/David/.lwnws/lwnwsCurrent.test.json");
-//			Weather lw;
-//			cache.load(lw);
-//			printWeather(lw);
 			cout << "\nCached Weather (test)..." << endl;
 			Weather cw = nwsDataRetriever.getCacheWeather(cache);
 			cout << dfo::formatWeather(cw);
-
-			//printWeatherObject(nwsDataRetriever);
-
 
 			NWSDataCombiner nwsDataCombiner(lw, cw);
 			cout << "\nCombined Weather (test)..." << endl;
@@ -89,7 +80,7 @@ int execMain(bop::variables_map& vm) {
 		}
 	}
 	catch (std::runtime_error& e) {
-		std::cerr << e.what() << std::endl;
+		std::cerr << e.what() << endl;
 		return -1;
 	}
 
