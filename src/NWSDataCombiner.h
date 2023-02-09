@@ -8,10 +8,23 @@
 #ifndef SRC_NWSDATACOMBINER_H_
 #define SRC_NWSDATACOMBINER_H_
 
+#include <map>
+#include <utility>
+
 #include "Weather.h"
+
+typedef void (*prophandler)(std::string, Weather&, Weather&);
+typedef std::map<std::string, prophandler> handlermap;
 
 class NWSDataCombiner {
 private:
+	static handlermap prophandlers;
+	static string getQC(string property, Weather& currentweather);
+
+	// property handlers
+	static void sansQC(string property, Weather& currentweather, Weather& cachedweather);
+	static void windgust(string property, Weather& currentweather, Weather& cachedweather);
+	static void defaulthandle(string property, Weather& currentweather, Weather& cachedweather);
 
 public:
 	NWSDataCombiner();
