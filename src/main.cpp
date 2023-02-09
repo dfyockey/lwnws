@@ -50,43 +50,35 @@ bop::variables_map initVariablesMap(int argc, char* argv[], bop::options_descrip
 }
 //////////////////////////////////////////////////////////////////////
 
+string displayWeather(NWSDataRetriever& nwsDataRetriever) {
+	Cache cache;
+
+	Weather lw = nwsDataRetriever.getLocalWeather();
+	Weather cw = nwsDataRetriever.getCacheWeather(cache);
+	NWSDataCombiner::combine(lw, cw);
+
+	string weather = DisplayFormatter::formatWeather(lw);
+
+	cache.save(lw);
+
+	return weather;
+}
+
 int execMain(bop::variables_map& vm) {
 	try {
 		NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
-		Cache cache;
 
 		if (vm.count("json"))
 			cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
-		else {
-			cout << "Current Weather..." << endl;
-			Weather lw = nwsDataRetriever.getLocalWeather();
-			try {
-				cout << dfo::formatWeather(lw);
-			} catch (std::exception &e) {
-				std::cerr << e.what() << endl;
-			}
-
-			cout << "\nCached Weather (test)..." << endl;
-			Weather cw = nwsDataRetriever.getCacheWeather(cache);
-			cout << dfo::formatWeather(cw);
-
-			NWSDataCombiner::combine(lw, cw);
-			cout << "\nCombined Weather (test)..." << endl;
-			cout << dfo::formatWeather(lw);
-
-			cout << "\nSaving to Cache..." << endl;
-			cache.save(lw);
-			cout << "Saved! :)" << endl;
-		}
+		else
+			cout << displayWeather(nwsDataRetriever) << std::flush;  // no endl facilitates use in Conky display
 	}
 	catch (std::runtime_error& e) {
 		std::cerr << e.what() << endl;
 		return -1;
 	}
-
 	return 0;
 }
-
 
 int main(int argc, char* argv[]) {
 
