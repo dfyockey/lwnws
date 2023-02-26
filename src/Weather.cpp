@@ -28,7 +28,12 @@ double Weather::toDouble(const boost::json::value& v) {
 }
 
 double Weather::getDouble(string prop) {
-	return toDouble(at("properties").at(prop).at("value"));
+	try {
+		return toDouble(at("properties").at(prop).at("value"));
+	} catch (std::runtime_error &e) {
+		std::cerr << e.what() << std::endl;
+		return 0;
+	}
 }
 
 double Weather::roundDouble(string prop, int precision /*=2*/) {

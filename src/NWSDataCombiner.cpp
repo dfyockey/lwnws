@@ -44,11 +44,17 @@ void NWSDataCombiner::windgust(string property, Weather& currentweather, Weather
 		defaulthandle(property, currentweather, cachedweather);
 }
 
+bool NWSDataCombiner::is_value_null(string property, Weather& currentweather) {
+	std::vector<string> v = {"properties", property, "value"};
+	bjs::value val = jsonutil::getvalue(currentweather, v);
+	return val.is_null();
+}
+
 void NWSDataCombiner::defaulthandle(string property, Weather& currentweather, Weather& cachedweather) {
 	string qc = getQC(property, currentweather);
 
 	// substitute cached data if current data has no quality control ("Z") or is rejected/erroneous ("X")
-	if ( qc == "Z" || qc == "X" ) {
+	if ( qc == "Z" || qc == "X" || qc == "Q" || is_value_null(property, currentweather) ) {
 		currentweather["properties"].as_object()[property].as_object()["value"] = cachedweather.at("properties").at(property).at("value");
 		currentweather["properties"].as_object()[property].as_object()["qualityControl"] = cachedweather.at("properties").at(property).at("qualityControl");
 	}

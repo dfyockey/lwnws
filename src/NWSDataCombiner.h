@@ -19,7 +19,8 @@ typedef std::map<std::string, prophandler> handlermap;
 class NWSDataCombiner {
 private:
 	static handlermap prophandlers;
-	static string getQC(string property, Weather& currentweather);
+	static string getQC (string property, Weather& currentweather);
+	static bool is_value_null (string property, Weather& currentweather);
 
 	// property handlers
 	static void sansQC(string property, Weather& currentweather, Weather& cachedweather);
