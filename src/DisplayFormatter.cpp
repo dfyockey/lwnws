@@ -27,7 +27,7 @@ string DisplayFormatter::formatWeather(Weather& w) {
 	const string leftmargin = " ";
 	const string spacer = "  ";
 
-	ss << leftmargin << w.description() << spacer << (( w.timestamp().size() > 11 ) ? w.timestamp().substr(11,5) : "?") << " UTC" << "\n";
+	ss << leftmargin << w.description() << "\n";
 	ss << leftmargin << w.tempF(0) << "°F" << spacer << w.pressurehPa() << "hPa" << spacer << w.humidity(0) << "%RH" << spacer;
 
 	string winddir = w.windDir();
