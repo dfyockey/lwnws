@@ -34,7 +34,8 @@ bop::options_description initDescription() {
 
 	desc.add_options()
 		( "help,h", " generate help message" )
-		( "json,j", " return unparsed JSON data for the specified location" )
+		( "json,j", " return JSON data possibly modified by previously cached data for the specified location" )
+		( "nwsjson,r", "return unmodified JSON data for the specified location" )
 		( "lat", bop::value<float>()->default_value( 38.99322, " 38.99322"), " latitude" )
 		( "lon", bop::value<float>()->default_value(-77.03207, "-77.03207"), " longitude" )
 	;
@@ -50,28 +51,34 @@ bop::variables_map initVariablesMap(int argc, char* argv[], bop::options_descrip
 }
 //////////////////////////////////////////////////////////////////////
 
-string displayWeather(NWSDataRetriever& nwsDataRetriever) {
+string getCombinedWeather(NWSDataRetriever& nwsDataRetriever, bool display) {
 	Cache cache;
 
 	Weather lw = nwsDataRetriever.getLocalWeather();
 	Weather cw = nwsDataRetriever.getCacheWeather(cache);
 	NWSDataCombiner::combine(lw, cw);
 
-	string weather = DisplayFormatter::formatWeather(lw);
+	string weather = (display) ? DisplayFormatter::formatWeather(lw) : serialize(lw);
 
+	// Save to cache last so any new data that causes an exception throw won't be saved.
 	cache.save(lw);
 
 	return weather;
 }
 
 int execMain(bop::variables_map& vm) {
+	const bool DISPLAY = true;
+	const bool JSON    = false;
+
 	try {
 		NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
 
 		if (vm.count("json"))
+			cout << getCombinedWeather(nwsDataRetriever, JSON) << endl;
+		else if (vm.count("nwsjson"))
 			cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
 		else
-			cout << displayWeather(nwsDataRetriever) << std::flush;  // no endl facilitates use in Conky display
+			cout << getCombinedWeather(nwsDataRetriever, DISPLAY) << std::flush;  // no endl facilitates use in Conky display
 	}
 	catch (std::runtime_error& e) {
 		std::cerr << e.what() << endl;
