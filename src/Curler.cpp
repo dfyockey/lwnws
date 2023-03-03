@@ -9,44 +9,6 @@
 
 using std::runtime_error;
 
-///// public /////////////////////////////////////////////////////////
-
-Curler::Curler(fieldsmap* fields) {
-	if ( !(curl = curl_easy_init()) )
-		throw std::runtime_error(string("curl_easy_init() failed"));
-
-	customHeaders = 0;
-
-	if (fields)
-		setHttpHeaderFields(*fields);
-}
-
-Curler::~Curler() {
-	if (customHeaders)
-		curl_slist_free_all(customHeaders);
-
-    curl_easy_cleanup(curl);
-}
-
-string Curler::pull(string url) {
-	CURLcode res;
-	ostringstream ossCurlResponse;
-
-	try {
-		setCurlOptions(curl, url, ossCurlResponse);
-
-		// Perform the request, where res will get the return code, and then check for errors
-		if( (res = curl_easy_perform(curl)) != CURLE_OK)
-			throw std::runtime_error(string("curl_easy_perform() failed: ") + curl_easy_strerror(res));
-	}
-	catch (std::runtime_error& e) {
-		std::cerr << e.what() << std::endl;
-	}
-
-	// Return a string containing the retrieved data requested or an empty string
-    return ossCurlResponse.str();
-}
-
 ///// private ////////////////////////////////////////////////////////
 
 void Curler::setCurlOptions(CURL* curl, string url, ostringstream& ossCurlResponse) {
@@ -90,4 +52,42 @@ size_t Curler::write_callback(char* data, size_t size, size_t nmemb, void* userd
 	*oss << string(data, datasize);
 
 	return datasize;
+}
+
+///// public /////////////////////////////////////////////////////////
+
+Curler::Curler(fieldsmap* fields) {
+	if ( !(curl = curl_easy_init()) )
+		throw std::runtime_error(string("curl_easy_init() failed"));
+
+	customHeaders = 0;
+
+	if (fields)
+		setHttpHeaderFields(*fields);
+}
+
+string Curler::pull(string url) {
+	CURLcode res;
+	ostringstream ossCurlResponse;
+
+	try {
+		setCurlOptions(curl, url, ossCurlResponse);
+
+		// Perform the request, where res will get the return code, and then check for errors
+		if( (res = curl_easy_perform(curl)) != CURLE_OK)
+			throw std::runtime_error(string("curl_easy_perform() failed: ") + curl_easy_strerror(res));
+	}
+	catch (std::runtime_error& e) {
+		std::cerr << e.what() << std::endl;
+	}
+
+	// Return a string containing the retrieved data requested or an empty string
+    return ossCurlResponse.str();
+}
+
+Curler::~Curler() {
+	if (customHeaders)
+		curl_slist_free_all(customHeaders);
+
+    curl_easy_cleanup(curl);
 }

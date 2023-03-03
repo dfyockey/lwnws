@@ -2,12 +2,15 @@
  * NWSDataRetriever.cpp
  *
  *  Created on: Aug 24, 2022
- *      Author: David
+ *      Author: David Yockey
  */
+
+#include <cstdlib>
 
 #include "NWSDataRetriever.h"
 #include "Curler.h"
 #include "MyMath.h"
+#include "Cache.h"
 
 namespace bjs = boost::json;
 
@@ -22,7 +25,6 @@ string NWSDataRetriever::fv2str (float f) {
 	ss << MyMath().roundFloat(f, 4);
 	return ss.str();
 }
-
 
 ///// public: ////////////////////////////////////////////////////////
 
@@ -53,7 +55,8 @@ Weather NWSDataRetriever::getLocalWeather() {
 	return Weather(parsed_weather);
 }
 
-NWSDataRetriever::~NWSDataRetriever() {
-	// TODO Auto-generated destructor stub
+Weather NWSDataRetriever::getCacheWeather(Cache& cache) {
+	Weather weather;
+	cache.load(weather);
+	return weather;
 }
-

@@ -2,12 +2,14 @@
  * Weather.cpp
  *
  *  Created on: Aug 26, 2022
- *      Author: David
+ *      Author: David Yockey
  */
 
 #include "Weather.h"
+#include "util/jsonutil.hpp"
 
 #include <array>
+#include <iostream>
 
 ///// private: ///////////////////////////////////////////////////////
 
@@ -21,7 +23,40 @@ double Weather::kph2mph(double kph) {
 	return mph;
 }
 
-string Weather::windNamedDir () {
+double Weather::toDouble(const boost::json::value& v) {
+	return boost::json::value_to<double>(v);
+}
+
+double Weather::getDouble(string prop) {
+	try {
+		return toDouble(at("properties").at(prop).at("value"));
+	} catch (std::runtime_error &e) {
+		std::cerr << e.what() << std::endl;
+		return 0;
+	}
+}
+
+double Weather::roundDouble(string prop, int precision /*=2*/) {
+	return MyMath().roundDouble( getDouble(prop), precision);
+}
+
+string Weather::qualityControl(string prop) {
+	return jsonutil::getstring(*this, {"properties", prop, "qualityControl"});
+}
+
+double Weather::getWindSpeed() {
+	double speed = 0;
+
+	try {
+		speed = getDouble("windSpeed");
+	} catch (std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	}
+
+	return speed;
+}
+
+string Weather::windNamedDir() {
 	std::array<string,8> namedDir = {"N","NE","E","SE","S","SW","W","NW"};
 
 	/*
@@ -39,24 +74,10 @@ string Weather::windNamedDir () {
 	return namedDir[index];
 }
 
-double Weather::windSetCalm() {
-	double speed = 0;
+double Weather::windSpeed(int precision, bool kph /*=true*/) {
+	double speed = getWindSpeed();
 
-	try {
-		speed = getDouble("windSpeed");
-		calm = (speed == 0);
-	}
-	catch (...) {
-		calm = false;
-	}
-
-	return speed;
-}
-
-double Weather::windSpeed(int precision, bool kph) {
-	double speed = windSetCalm();	// Called in both windSpeed and windDir methods
-									// since user may call speed or direction methods in any order.
-	if (!calm) {
+	if ( speed > 0 ) {
 		if (kph)
 			speed = MyMath().roundDouble(speed, precision);
 		else //mph
@@ -68,8 +89,9 @@ double Weather::windSpeed(int precision, bool kph) {
 
 double Weather::windGust(int precision, bool kph) {
 	double gust = 0;
+	string qc = qualityControl("windGust");
 
-	if ( !qc("windGust","Z") && !qc("windGust","X") ) {
+	if ( qc != "Z" && qc != "X" ) {
 		if (kph)
 			gust = roundDouble("windGust", precision);
 		else //kph
@@ -81,18 +103,52 @@ double Weather::windGust(int precision, bool kph) {
 
 ///// public: ////////////////////////////////////////////////////////
 
+string Weather::getString(string prop) {
+	return at("properties").at(prop).as_string().c_str();
+}
+
+string Weather::description() {
+	return getString("textDescription");
+}
+
+string Weather::timestamp() {
+	string s = getString("timestamp");
+	const int UTC_TIME_POS = 11;
+	return ((!s.empty() && s.size() >= UTC_TIME_POS) ? s : "");
+}
+
+double Weather::humidity(int precision /*=2*/) {
+	return roundDouble("relativeHumidity", precision);
+}
+
+double Weather::tempC(int precision /*=2*/) {
+	return roundDouble("temperature", precision);
+}
+
+double Weather::tempF(int precision/*=2*/) {
+	return MyMath().roundDouble( C2F(getDouble("temperature")), precision );
+}
+
+int Weather::pressurehPa() {
+	return pressurePa()/100;
+}
+
+int Weather::pressurePa() {
+	return at("properties").at("barometricPressure").at("value").as_int64();
+}
+
 string Weather::windDir() {
 	string result;
+	string qc = qualityControl("windDirection");
 
-	windSetCalm();		// Called in both windSpeed and windDir methods
-						// since user may call speed or direction methods in any order.
-
-	if (calm)
-		result = "Calm";
-	else if (qc("windDirection","Z"))
+	if ( getWindSpeed() == 0 ) {
+		if ( qc != "Z" && qc != "X")
+			result = "Calm";
+		else
+			result = "";
+	}
+	else if ( qc == "Z" )
 		result = "Vrbl";
-	else if (qc("windDirection","X"))
-		result = "Unkn";
 	else
 		result = windNamedDir();
 
@@ -114,14 +170,4 @@ double Weather::windGustkph(int precision) {
 double Weather::windGustmph(int precision) {
 	return windGust(precision, false);
 }
-
-/*
-Weather::Weather() {
-	// TODO Auto-generated constructor stub
-}
-
-Weather::~Weather() {
-	// TODO Auto-generated destructor stub
-}
-*/
 

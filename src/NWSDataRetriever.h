@@ -2,7 +2,7 @@
  * NWSDataRetriever.h
  *
  *  Created on: Aug 24, 2022
- *      Author: David
+ *      Author: David Yockey
  */
 
 #ifndef SRC_NWSDATARETRIEVER_H_
@@ -13,6 +13,7 @@
 
 #include "Weather.h"
 #include "Parser.h"
+#include "Cache.h"
 
 using std::string;
 
@@ -28,8 +29,9 @@ public:
 
 	string	getLocalWeatherJSON();
 	Weather getLocalWeather();
+	Weather getCacheWeather(Cache& cache);
 
-	virtual ~NWSDataRetriever();
+	virtual ~NWSDataRetriever() {};
 };
 
 #endif /* SRC_NWSDATARETRIEVER_H_ */
