@@ -28,7 +28,7 @@
  *
  */
 
-bjs::value jsonutil::getvalue(bjs::object& obj, std::vector<string>& props) {
+bjs::value jsonutil::getvalue(bjs::object& obj, vector<string>& props) {
 	bjs::value val = obj;
 
 	// Drill down through JSON hierarchy until desired value is found
@@ -39,6 +39,6 @@ bjs::value jsonutil::getvalue(bjs::object& obj, std::vector<string>& props) {
 	return val;
 }
 
-std::string jsonutil::getstring(bjs::object& obj, std::vector<string> props) {
+std::string jsonutil::getstring(bjs::object& obj, vector<string> props) {
 	return getvalue(obj, props).as_string().c_str();
 }
