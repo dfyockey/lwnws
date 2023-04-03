@@ -4,7 +4,7 @@ Local Weather from the U.S. National Weather Service
 
 ## Description
 
-**lwnws** retrieves the latest weather conditions at the U.S. National
+**lwnws** determines the latest weather conditions at the U.S. National
 Weather Service observation station closest to a location specified by a
 given latitude and longitude. The weather conditions are based on data
 provided by the NWS public API. The output is formatted and printed to
