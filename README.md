@@ -59,7 +59,7 @@ First, open a terminal and navigate to the top-level directory of the cloned
 repository or decompressed file.
 
 Then, if you downloaded a later version of Boost as discussed under
-*Requirements* above, run `configure` with the path to the Boost directory as
+**Requirements** above, run `configure` with the path to the Boost directory as
 an include option, as in the following example (where Boost 1.76.0 has been
 decompressed into directory `opt` in home directory `myhome` and has the name
 `boost_1_76_0`):
