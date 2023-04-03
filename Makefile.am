@@ -24,7 +24,7 @@ lwnws_SOURCES = \
 	src/Weather.cpp \
 	src/Weather.h
 
-#lwnws_CPPFLAGS = @CURL_CFLAGS@
+lwnws_CPPFLAGS = -std=c++17
 
 #lwnws_LDFLAGS = \
 #	-lboost_program_options \
