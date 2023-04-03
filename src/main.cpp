@@ -41,15 +41,17 @@ using std::to_string;
 ///// Initialization of Program Options //////////////////////////////
 bop::options_description initDescription() {
 
-	bop::options_description desc("\nGets the latest weather conditions at the U.S. National Weather Service\n"
-			                      "observation station closest to the specified location.\n\n  Command Line Options");
+	bop::options_description desc("\nDetermines and outputs the latest weather conditions at the\n"
+			                        "U.S. National Weather Service observation station closest to\n"
+			                        "the specified location based on publicly available NWS data.\n"
+			                      "\n  Command Line Options");
 
 	desc.add_options()
-		( "help,h", " generate help message" )
-		( "json,j", " return JSON data possibly modified by previously cached data for the specified location" )
-		( "nwsjson,r", "return unmodified JSON data for the specified location" )
-		( "lat", bop::value<float>()->default_value( 38.99322, " 38.99322"), " latitude" )
-		( "lon", bop::value<float>()->default_value(-77.03207, "-77.03207"), " longitude" )
+		( "help,h", "Generate help message." )
+		( "json,j", "Return JSON data for current weather at specified location, modified by cached data as needed." )
+		( "rawjson,r", "Return JSON data for current weather at specified location, unmodified (i.e. direct from NWS API)." )
+		( "lat", bop::value<float>()->default_value( 38.99322, " 38.99322"), "Latitude" )
+		( "lon", bop::value<float>()->default_value(-77.03207, "-77.03207"), "Longitude" )
 	;
 
 	return desc;
@@ -87,7 +89,7 @@ int execMain(bop::variables_map& vm) {
 
 		if (vm.count("json"))
 			cout << getCombinedWeather(nwsDataRetriever, JSON) << endl;
-		else if (vm.count("nwsjson"))
+		else if (vm.count("rawjson"))
 			cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
 		else
 			cout << getCombinedWeather(nwsDataRetriever, DISPLAY) << std::flush;  // no endl facilitates use in Conky display
