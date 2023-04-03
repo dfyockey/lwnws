@@ -81,12 +81,12 @@ run the command:
 
 ## Removal
 
-If not installed as described above, simply delete the top-level
-directory of the cloned repository or decompressed file.
+If the program was not installed as described above, simply delete the
+top-level directory of the cloned repository or decompressed file.
 
 Otherwise, return to the top-level directory of the cloned repository
 or decompressed file, and from there run the command:
 
     sudo make uninstall
 
-Then, delete top-level directory.
+Then, delete the top-level directory.
