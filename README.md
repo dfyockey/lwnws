@@ -64,7 +64,7 @@ an include option, as in the following example (where Boost 1.76.0 has been
 decompressed into directory `opt` in home directory `myhome` and has the name
 `boost_1_76_0`):
 
-    ./configure -I/home/myhome/opt/boost_1_76_0
+    ./configure CPPFLAGS="-I/home/myhome/opt/boost_1_76_0"
 
 Otherwise, simply run the command:
 
