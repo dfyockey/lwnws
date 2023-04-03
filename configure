@@ -5102,7 +5102,6 @@ fi
 
 
 # Checks for libraries.
-#AC_CHECK_LIB([boost_program_options], [printf], [])
 
 
   # Make sure we can run config.sub.
@@ -5821,7 +5820,6 @@ fi
 
 
 LIBS="$BOOST_PROGRAM_OPTIONS_LIB $LIBS"
-#PKG_CHECK_MODULES([CURL], libcurl)
 
 # Checks for header files.
 

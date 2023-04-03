@@ -1038,13 +1038,6 @@ uninstall-am: uninstall-binPROGRAMS
 .PRECIOUS: Makefile
 
 
-#lwnws_LDFLAGS = \
-#	-lboost_program_options \
-#	@CURL_LIBS@
-
-#lwnws_LDFLAGS = \
-#	@CURL_LIBS@
-
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
