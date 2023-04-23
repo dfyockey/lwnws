@@ -17,7 +17,12 @@
  *
  */
 
+#define BOOST_LOG_DYN_LINK 1
+
 #include <iostream>
+#include <string>
+#include <exception>
+
 
 #include <boost/json/src.hpp>
 #include <boost/program_options.hpp>
@@ -31,14 +36,33 @@
 #include <boost/json/object.hpp>
 #include <boost/json/value.hpp>
 
-namespace bop = boost::program_options;
+#include <boost/log/trivial.hpp>
+#include <boost/log/utility/setup/file.hpp>		// need for `boost::log::add_file_log`
+#include <boost/log/sources/logger.hpp>			// need for `boost::log::sources::logger`
+#include <boost/log/utility/setup/common_attributes.hpp>
+
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 namespace dfo = DisplayFormatter;
+
+// logging sink
+namespace logging  = boost::log;
+namespace keywords = boost::log::keywords;
+
+// logging source
+namespace src      = boost::log::sources;
 
 using std::cout;
 using std::endl;
+using std::string;
 using std::to_string;
 
 ///// Initialization of Program Options //////////////////////////////
+
+namespace bop = boost::program_options;
+
 bop::options_description initDescription() {
 
 	bop::options_description desc("\nDetermines and outputs the latest weather conditions at the\n"
@@ -63,7 +87,35 @@ bop::variables_map initVariablesMap(int argc, char* argv[], bop::options_descrip
 	bop::notify(vm);
 	return vm;
 }
-//////////////////////////////////////////////////////////////////////
+
+///// Logging ////////////////////////////////////////////////////////
+
+string homedir() {
+
+	string homedir = getenv("HOME");
+
+	if ( homedir.empty() ) {
+		homedir = getpwuid(getuid())->pw_dir;
+	}
+
+	return homedir;
+}
+
+void initlog()
+{
+	const std::ios_base::openmode APPEND2LOG = std::ios_base::out|std::ios_base::app;
+
+	logging::add_file_log(
+		keywords::file_name  =  homedir() + "/.lwnws/lwnws.log",
+		keywords::open_mode  =  APPEND2LOG,
+		keywords::auto_flush =  true,
+		keywords::format	 = "%TimeStamp% — %Message%"
+	);
+
+	logging::add_common_attributes();
+}
+
+///// Actual Program /////////////////////////////////////////////////
 
 string getCombinedWeather(NWSDataRetriever& nwsDataRetriever, bool display) {
 	Cache cache;
@@ -80,28 +132,38 @@ string getCombinedWeather(NWSDataRetriever& nwsDataRetriever, bool display) {
 	return weather;
 }
 
-int execMain(bop::variables_map& vm) {
+void _execMain(bop::variables_map& vm) {
 	const bool DISPLAY = true;
 	const bool JSON    = false;
 
-	try {
-		NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
+	NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
 
-		if (vm.count("json"))
-			cout << getCombinedWeather(nwsDataRetriever, JSON) << endl;
-		else if (vm.count("rawjson"))
-			cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
-		else
-			cout << getCombinedWeather(nwsDataRetriever, DISPLAY) << std::flush;  // no endl facilitates use in Conky display
-	}
-	catch (std::runtime_error& e) {
-		std::cerr << e.what() << endl;
+	if (vm.count("json"))
+		cout << getCombinedWeather(nwsDataRetriever, JSON) << endl;
+	else if (vm.count("rawjson"))
+		cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
+	else
+		cout << getCombinedWeather(nwsDataRetriever, DISPLAY) << std::flush;  // no endl facilitates use in Conky display
+}
+
+int execMain(bop::variables_map& vm) {
+	try {
+		_execMain(vm);
+	} catch (std::runtime_error& e) {
+		src::logger lg;
+		BOOST_LOG(lg) << "Runtime Error : " << e.what();
 		return -1;
+	} catch (std::exception &e) {
+		src::logger lg;
+		BOOST_LOG(lg) << "Unknown Error : " << e.what();
+		return -2;
 	}
 	return 0;
 }
 
 int main(int argc, char* argv[]) {
+
+	initlog();
 
 	bop::options_description desc = initDescription();
 	bop::variables_map vm = initVariablesMap(argc, argv, desc);

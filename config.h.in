@@ -3,8 +3,17 @@
 /* define if the Boost library is available */
 #undef HAVE_BOOST
 
+/* define if the Boost::Log library is available */
+#undef HAVE_BOOST_LOG
+
+/* define if the Boost::Log_setup library is available */
+#undef HAVE_BOOST_LOG_SETUP
+
 /* define if the Boost::PROGRAM_OPTIONS library is available */
 #undef HAVE_BOOST_PROGRAM_OPTIONS
+
+/* define if the Boost::Thread library is available */
+#undef HAVE_BOOST_THREAD
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
