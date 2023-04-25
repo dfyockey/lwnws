@@ -106,7 +106,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_lwnws_OBJECTS = src/util/lwnws-jsonutil.$(OBJEXT) \
-	src/lwnws-Cache.$(OBJEXT) src/lwnws-Curler.$(OBJEXT) \
+	src/util/lwnws-filesysutil.$(OBJEXT) src/lwnws-Cache.$(OBJEXT) \
+	src/lwnws-Curler.$(OBJEXT) \
 	src/lwnws-DisplayFormatter.$(OBJEXT) src/lwnws-main.$(OBJEXT) \
 	src/lwnws-MyMath.$(OBJEXT) src/lwnws-NWSDataCombiner.$(OBJEXT) \
 	src/lwnws-NWSDataRetriever.$(OBJEXT) \
@@ -136,6 +137,7 @@ am__depfiles_remade = src/$(DEPDIR)/lwnws-Cache.Po \
 	src/$(DEPDIR)/lwnws-NWSDataRetriever.Po \
 	src/$(DEPDIR)/lwnws-Parser.Po src/$(DEPDIR)/lwnws-Weather.Po \
 	src/$(DEPDIR)/lwnws-main.Po \
+	src/util/$(DEPDIR)/lwnws-filesysutil.Po \
 	src/util/$(DEPDIR)/lwnws-jsonutil.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -325,6 +327,8 @@ AUTOMAKE_OPTIONS = subdir-objects
 lwnws_SOURCES = \
 	src/util/jsonutil.cpp \
 	src/util/jsonutil.hpp \
+	src/util/filesysutil.cpp\
+	src/util/filesysutil.hpp\
 	src/appdefaults.h \
 	src/Cache.cpp \
 	src/Cache.h \
@@ -448,6 +452,8 @@ src/util/$(DEPDIR)/$(am__dirstamp):
 	@: > src/util/$(DEPDIR)/$(am__dirstamp)
 src/util/lwnws-jsonutil.$(OBJEXT): src/util/$(am__dirstamp) \
 	src/util/$(DEPDIR)/$(am__dirstamp)
+src/util/lwnws-filesysutil.$(OBJEXT): src/util/$(am__dirstamp) \
+	src/util/$(DEPDIR)/$(am__dirstamp)
 src/$(am__dirstamp):
 	@$(MKDIR_P) src
 	@: > src/$(am__dirstamp)
@@ -494,6 +500,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/lwnws-Parser.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/lwnws-Weather.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/lwnws-main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/util/$(DEPDIR)/lwnws-filesysutil.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/util/$(DEPDIR)/lwnws-jsonutil.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -531,6 +538,20 @@ src/util/lwnws-jsonutil.obj: src/util/jsonutil.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/util/jsonutil.cpp' object='src/util/lwnws-jsonutil.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(lwnws_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/util/lwnws-jsonutil.obj `if test -f 'src/util/jsonutil.cpp'; then $(CYGPATH_W) 'src/util/jsonutil.cpp'; else $(CYGPATH_W) '$(srcdir)/src/util/jsonutil.cpp'; fi`
+
+src/util/lwnws-filesysutil.o: src/util/filesysutil.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(lwnws_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/util/lwnws-filesysutil.o -MD -MP -MF src/util/$(DEPDIR)/lwnws-filesysutil.Tpo -c -o src/util/lwnws-filesysutil.o `test -f 'src/util/filesysutil.cpp' || echo '$(srcdir)/'`src/util/filesysutil.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/util/$(DEPDIR)/lwnws-filesysutil.Tpo src/util/$(DEPDIR)/lwnws-filesysutil.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/util/filesysutil.cpp' object='src/util/lwnws-filesysutil.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(lwnws_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/util/lwnws-filesysutil.o `test -f 'src/util/filesysutil.cpp' || echo '$(srcdir)/'`src/util/filesysutil.cpp
+
+src/util/lwnws-filesysutil.obj: src/util/filesysutil.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(lwnws_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/util/lwnws-filesysutil.obj -MD -MP -MF src/util/$(DEPDIR)/lwnws-filesysutil.Tpo -c -o src/util/lwnws-filesysutil.obj `if test -f 'src/util/filesysutil.cpp'; then $(CYGPATH_W) 'src/util/filesysutil.cpp'; else $(CYGPATH_W) '$(srcdir)/src/util/filesysutil.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) src/util/$(DEPDIR)/lwnws-filesysutil.Tpo src/util/$(DEPDIR)/lwnws-filesysutil.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='src/util/filesysutil.cpp' object='src/util/lwnws-filesysutil.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(lwnws_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o src/util/lwnws-filesysutil.obj `if test -f 'src/util/filesysutil.cpp'; then $(CYGPATH_W) 'src/util/filesysutil.cpp'; else $(CYGPATH_W) '$(srcdir)/src/util/filesysutil.cpp'; fi`
 
 src/lwnws-Cache.o: src/Cache.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(lwnws_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT src/lwnws-Cache.o -MD -MP -MF src/$(DEPDIR)/lwnws-Cache.Tpo -c -o src/lwnws-Cache.o `test -f 'src/Cache.cpp' || echo '$(srcdir)/'`src/Cache.cpp
@@ -944,6 +965,7 @@ distclean: distclean-am
 	-rm -f src/$(DEPDIR)/lwnws-Parser.Po
 	-rm -f src/$(DEPDIR)/lwnws-Weather.Po
 	-rm -f src/$(DEPDIR)/lwnws-main.Po
+	-rm -f src/util/$(DEPDIR)/lwnws-filesysutil.Po
 	-rm -f src/util/$(DEPDIR)/lwnws-jsonutil.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -1001,6 +1023,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f src/$(DEPDIR)/lwnws-Parser.Po
 	-rm -f src/$(DEPDIR)/lwnws-Weather.Po
 	-rm -f src/$(DEPDIR)/lwnws-main.Po
+	-rm -f src/util/$(DEPDIR)/lwnws-filesysutil.Po
 	-rm -f src/util/$(DEPDIR)/lwnws-jsonutil.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

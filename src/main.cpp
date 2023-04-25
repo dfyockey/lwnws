@@ -23,7 +23,6 @@
 #include <string>
 #include <exception>
 
-
 #include <boost/json/src.hpp>
 #include <boost/program_options.hpp>
 #include <curl/curl.h>
@@ -41,9 +40,7 @@
 #include <boost/log/sources/logger.hpp>			// need for `boost::log::sources::logger`
 #include <boost/log/utility/setup/common_attributes.hpp>
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
+#include "util/filesysutil.hpp"
 
 namespace dfo = DisplayFormatter;
 
@@ -90,23 +87,12 @@ bop::variables_map initVariablesMap(int argc, char* argv[], bop::options_descrip
 
 ///// Logging ////////////////////////////////////////////////////////
 
-string homedir() {
-
-	string homedir = getenv("HOME");
-
-	if ( homedir.empty() ) {
-		homedir = getpwuid(getuid())->pw_dir;
-	}
-
-	return homedir;
-}
-
 void initlog()
 {
 	const std::ios_base::openmode APPEND2LOG = std::ios_base::out|std::ios_base::app;
 
 	logging::add_file_log(
-		keywords::file_name  =  homedir() + "/.lwnws/lwnws.log",
+		keywords::file_name  =  filesysutil::homedir() + "/.lwnws/lwnws.log",
 		keywords::open_mode  =  APPEND2LOG,
 		keywords::auto_flush =  true,
 		keywords::format	 = "%TimeStamp% — %Message%"

@@ -5,6 +5,8 @@ bin_PROGRAMS = lwnws
 lwnws_SOURCES = \
 	src/util/jsonutil.cpp \
 	src/util/jsonutil.hpp \
+	src/util/filesysutil.cpp\
+	src/util/filesysutil.hpp\
 	src/appdefaults.h \
 	src/Cache.cpp \
 	src/Cache.h \

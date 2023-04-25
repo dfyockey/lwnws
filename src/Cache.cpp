@@ -25,6 +25,7 @@
 #include <utility>
 #include <iostream>
 #include <boost/json/serialize.hpp>
+#include "util/filesysutil.hpp"
 
 namespace fsys = std::filesystem;
 
@@ -34,8 +35,7 @@ string Cache::makeCachefilePath(string appname, string cachefilename) {
 	// Returns the default cachefile path `$HOME/.<appname>/<cachefilename>`,
 	// where $HOME is the value of the HOME environment variable.
 
-	string HOME(getenv("HOME"));
-	return HOME + "/." + appname + "/" + cachefilename;
+	return filesysutil::homedir() + "/." + appname + "/" + cachefilename;
 }
 
 ///// public: ////////////////////////////////////////////////////////
