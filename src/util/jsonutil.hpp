@@ -34,6 +34,8 @@ namespace bjs = boost::json;
 namespace jsonutil {
 	bjs::value getvalue(bjs::object& obj, vector<string>& props);
 	string     getstring(bjs::object& obj, vector<string> props);
+
+	void pretty_print( std::ostream& os, bjs::value const& jv, std::string* indent = nullptr );
 }
 
 #endif /* JSONUTIL_HPP_ */

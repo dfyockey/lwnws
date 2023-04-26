@@ -34,6 +34,7 @@
 
 #include <boost/json/object.hpp>
 #include <boost/json/value.hpp>
+#include <boost/json/value_from.hpp>
 
 #include <boost/log/trivial.hpp>
 #include <boost/log/utility/setup/file.hpp>		// need for `boost::log::add_file_log`
@@ -41,6 +42,7 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 
 #include "util/filesysutil.hpp"
+#include "util/jsonutil.hpp"
 
 namespace dfo = DisplayFormatter;
 
@@ -124,12 +126,14 @@ void _execMain(bop::variables_map& vm) {
 
 	NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
 
-	if (vm.count("json"))
-		cout << getCombinedWeather(nwsDataRetriever, JSON) << endl;
-	else if (vm.count("rawjson"))
+	if (vm.count("json")) {
+		bjs::value jv = bjs::parse(getCombinedWeather(nwsDataRetriever, JSON));
+		jsonutil::pretty_print(cout, jv);
+	} else if (vm.count("rawjson")) {
 		cout << nwsDataRetriever.getLocalWeatherJSON() << endl;
-	else
+	} else {
 		cout << getCombinedWeather(nwsDataRetriever, DISPLAY) << std::flush;  // no endl facilitates use in Conky display
+	}
 }
 
 int execMain(bop::variables_map& vm) {
