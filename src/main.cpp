@@ -153,10 +153,14 @@ int execMain(bop::variables_map& vm) {
 		src::logger lg;
 		BOOST_LOG(lg) << "Runtime Error : " << e.what();
 		return -1;
+	} catch (std::invalid_argument &e) {
+		src::logger lg;
+		BOOST_LOG(lg) << "Argument Error : " << e.what();
+		return -2;
 	} catch (std::exception &e) {
 		src::logger lg;
 		BOOST_LOG(lg) << "Unknown Error : " << e.what();
-		return -2;
+		return -3;
 	}
 	return 0;
 }
