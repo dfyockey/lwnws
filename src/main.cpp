@@ -18,6 +18,8 @@
  */
 
 #define BOOST_LOG_DYN_LINK 1
+const float NWSHQ_LAT =  38.99322;
+const float NWSHQ_LON = -77.03207;
 
 #include <iostream>
 #include <string>
@@ -73,8 +75,8 @@ bop::options_description initDescription() {
 		( "help,h", "Generate help message." )
 		( "json,j", "Return JSON data for current weather at specified location, modified by cached data as needed." )
 		( "rawjson,r", "Return JSON data for current weather at specified location, unmodified (i.e. direct from NWS API)." )
-		( "lat", bop::value<float>()->default_value( 38.99322, " 38.99322"), "Latitude" )
-		( "lon", bop::value<float>()->default_value(-77.03207, "-77.03207"), "Longitude" )
+		( "lat", bop::value<float>()->default_value( NWSHQ_LAT, string(" ") + to_string(NWSHQ_LAT)), "Latitude" )
+		( "lon", bop::value<float>()->default_value( NWSHQ_LON, to_string(NWSHQ_LON)), "Longitude" )
 	;
 
 	return desc;
@@ -123,6 +125,14 @@ string getCombinedWeather(NWSDataRetriever& nwsDataRetriever, bool display) {
 void _execMain(bop::variables_map& vm) {
 	const bool DISPLAY = true;
 	const bool JSON    = false;
+
+	float lat = vm["lat"].as<float>();
+	float lon = vm["lon"].as<float>();
+
+	// XOR to ensure that either both or neither lat & lon options are provided
+	if ( (lat != NWSHQ_LAT) != (lon != NWSHQ_LON) ) {
+		throw std::invalid_argument("Both lat and lon must be provided");
+	}
 
 	NWSDataRetriever nwsDataRetriever( vm["lat"].as<float>(), vm["lon"].as<float>() );
 
