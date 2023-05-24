@@ -18,6 +18,8 @@
  *
  */
 
+#define BOOST_LOG_DYN_LINK 1
+
 #include <cstdlib>
 
 #include "NWSDataRetriever.h"
@@ -26,6 +28,10 @@
 #include "Cache.h"
 
 namespace bjs = boost::json;
+
+#include <boost/log/trivial.hpp>
+#include <boost/log/sources/logger.hpp>
+namespace src = boost::log::sources;
 
 
 ///// private: ///////////////////////////////////////////////////////
@@ -63,8 +69,20 @@ string NWSDataRetriever::getLocalWeatherJSON() {
 }
 
 Weather NWSDataRetriever::getLocalWeather() {
-	string weatherJSON = getLocalWeatherJSON();
-	bjs::value parsed_weather = parser.parse(weatherJSON);
+	bjs::value parsed_weather;
+	try {
+		string weatherJSON = getLocalWeatherJSON();
+		parsed_weather = parser.parse(weatherJSON);
+	} catch (std::runtime_error &e) {
+		src::logger lg;
+		if (e.what() != "incomplete JSON") {
+			throw;
+		} else {
+			BOOST_LOG(lg) << "Runtime Error : " << e.what() << "\n"
+						  << "- NWSDataRetriever::getLocalWeather returning empty Weather object.\n"
+						  << "- Continuing execution : Display will rely entirely on cached data.";
+		}
+	}
 	return Weather(parsed_weather);
 }
 
